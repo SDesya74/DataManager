@@ -32,7 +32,10 @@ class DataManager implements ArrayAccess
 
         $scope = $this->scopes[$scopeName];
         $entry = $scope->entry($entryKey);
-        App::call($callback, ["scope" => $scope, "entry" => $entry, "previousValue" => $args[1]]);
+        $value = App::call($callback, ["scope" => $scope, "entry" => $entry, "previousValue" => $args[1]]);
+        if (isset($value)) {
+          $entry->set($value);
+        }
       }
     );
   }
@@ -45,15 +48,15 @@ class DataManager implements ArrayAccess
     $this->scopes[$name] = new Scope($name);
   }
 
-  public function scope(string $name): ScopeBuilder
+  public function scope(string $name): ScopeHandleBuilder
   {
     if (!key_exists($name, $this->scopes)) {
       throw new ErrorException("There is no scope `$name`. To register new scope use `\$dm->registerScope(\"$name\");` in boot section");
     }
-    return new ScopeBuilder($this->scopes[$name], false);
+    return new ScopeHandleBuilder($this->scopes[$name], false);
   }
 
-  public function allPublic()
+  public function allPublic(): array
   {
     $output = [];
     foreach ($this->scopes as $scope) {
@@ -63,7 +66,7 @@ class DataManager implements ArrayAccess
         }
       }
     }
-    return ["dm" => $output]; // FIXME: remove 'dm', it is only for testing purposes
+    return $output;
   }
 
   /**

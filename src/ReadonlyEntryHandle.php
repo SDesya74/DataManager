@@ -36,7 +36,10 @@ class ReadonlyEntryHandle
     Event::listen(
       $this->fullPath(),
       function (Entry $entry, $previousValue) use ($callback) {
-        App::call($callback, ["entry" => $entry, "previousValue" => $previousValue]);
+        $value = App::call($callback, ["scope"->$this->scope, "entry" => $entry, "previousValue" => $previousValue]);
+        if (isset($value)) {
+          $entry->set($value);
+        }
       }
     );
   }

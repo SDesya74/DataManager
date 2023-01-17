@@ -4,11 +4,9 @@ namespace SDesya74\DataManager;
 
 use ArrayAccess;
 use Closure;
+use ErrorException;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Log;
-use PHPUnit\Framework\Error;
-use Psy\Exception\ErrorException;
 
 class MutableScopeHandle implements ArrayAccess
 {
@@ -56,7 +54,10 @@ class MutableScopeHandle implements ArrayAccess
         [$_, $_, $entryKey] = explode(".", $key);
 
         $entry = $this->scope->entry($entryKey);
-        App::call($callback, ["scope" => $this->scope, "entry" => $entry, "previousValue" => $args[1]]);
+        $value = App::call($callback, ["scope" => $this->scope, "entry" => $entry, "previousValue" => $args[1]]);
+        if (isset($value)) {
+          $entry->set($value);
+        }
       }
     );
   }
