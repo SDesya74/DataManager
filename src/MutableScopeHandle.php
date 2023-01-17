@@ -8,6 +8,9 @@ use ErrorException;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Event;
 
+/**
+ * Mutable handle for a scope
+ */
 class MutableScopeHandle implements ArrayAccess
 {
   protected Scope $scope;
@@ -19,11 +22,20 @@ class MutableScopeHandle implements ArrayAccess
     $this->public = $public;
   }
 
+  /**
+   * Get a readonly handle with same properties
+   * @return ReadonlyScopeHandle
+   */
   public function readonly(): ReadonlyScopeHandle
   {
     return new ReadonlyScopeHandle($this->scope, $this->public);
   }
 
+  /**
+   * Get a mutable entry handle
+   * @param string $key Entry key
+   * @return MutableEntryHandle
+   */
   public function entry(string $key): MutableEntryHandle
   {
     $isNewEntry = !$this->scope->entryExists($key);
@@ -40,12 +52,42 @@ class MutableScopeHandle implements ArrayAccess
     return new MutableEntryHandle($this->scope, $entry->setPublic($this->public));
   }
 
+  /**
+   * Get an entry handle that makes easier to work with Eloquent models with DataManager
+   * 
+   * @param string $key Entry key
+   * @param mixed $modelClass Class of Eloquent model
+   * @param mixed $modelId Primary key of needed model. It uses Model::findOrFail underneath so you can provide anything that can be provided to that method.
+   * @return ModelEntryHandle 
+   */
   public function model(string $key, $modelClass, $modelId)
   {
     $entry = $this->scope->entry($key)->setPublic($this->public);
     return new ModelEntryHandle($this->scope, $entry, $modelClass, $modelId);
   }
 
+  /**
+   * Subscribe on all mutations in all scopes
+   * 
+   * Example:
+   * ```php
+   * $scope->subscribe(
+   *   function (Scope $scope, Entry $entry, $previousValue) {
+   *     // check if this is initialization
+   *     $action = is_null($previousValue) ? 'INITIALIZED' : 'MUTATED';
+   * 
+   *     // you can set value like this
+   *     $entry->set(42);
+   * 
+   *     // or like this
+   *     return 42;
+   *   }
+   * );
+   * ```
+   * 
+   * @param Closure $callback A function with (Scope $scope, Entry $entry, $previousValue) args
+   * @return void
+   */
   function subscribe(Closure $callback)
   {
     Event::listen(

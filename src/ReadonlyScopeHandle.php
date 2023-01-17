@@ -5,7 +5,9 @@ namespace SDesya74\DataManager;
 use ArrayAccess;
 use Psy\Exception\ErrorException;
 
-
+/**
+ * Readonly handle for a scope
+ */
 class ReadonlyScopeHandle implements ArrayAccess
 {
   protected Scope $scope;
@@ -17,11 +19,24 @@ class ReadonlyScopeHandle implements ArrayAccess
     $this->public = $public;
   }
 
+  /**
+   * Get a readonly entry handle
+   * @param string $key Entry key
+   * @return ReadonlyEntryHandle
+   */
   public function entry(string $key): ReadonlyEntryHandle
   {
     return new ReadonlyEntryHandle($this->scope, $this->scope->entry($key)->setPublic($this->public));
   }
 
+  /**
+   * Get an entry handle that makes easier to work with Eloquent models with DataManager
+   * 
+   * @param string $key Entry key
+   * @param mixed $modelClass Class of Eloquent model
+   * @param mixed $modelId Primary key of needed model. It uses Model::findOrFail underneath so you can provide anything that can be provided to that method.
+   * @return ModelEntryHandle 
+   */
   public function model(string $key, $modelClass, $modelId)
   {
     return new ModelEntryHandle($this->scope, $this->scope->entry($key)->setPublic($this->public), $modelClass, $modelId);
