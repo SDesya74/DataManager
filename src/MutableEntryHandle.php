@@ -5,7 +5,7 @@ namespace SDesya74\DataManager;
 use Illuminate\Support\Facades\Event;
 
 /**
- * Mutable handle for entry
+ * Mutable handle for an entry
  */
 class MutableEntryHandle extends ReadonlyEntryHandle
 {

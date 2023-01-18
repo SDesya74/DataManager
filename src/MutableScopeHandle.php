@@ -67,7 +67,7 @@ class MutableScopeHandle implements ArrayAccess
   }
 
   /**
-   * Subscribe on all mutations in all scopes
+   * Subscribe on all mutations in this entry
    * 
    * Example:
    * ```php
