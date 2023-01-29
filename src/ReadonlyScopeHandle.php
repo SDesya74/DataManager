@@ -30,6 +30,15 @@ class ReadonlyScopeHandle implements ArrayAccess
   }
 
   /**
+   * Get associative array with all values of entries with current scope visibility
+   * @return array
+   */
+  public function all(): array
+  {
+    return array_map(fn($e) => $e->get(), array_filter($this->scope->entries(), fn($e) => $e->isPublic() === $this->public));
+  }
+
+  /**
    * Get an entry handle that makes easier to work with Eloquent models with DataManager
    * 
    * @param string $key Entry key

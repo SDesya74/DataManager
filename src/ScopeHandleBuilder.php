@@ -66,4 +66,13 @@ class ScopeHandleBuilder
   {
     return new ReadonlyScopeHandle($this->scope, $this->public);
   }
+
+  /**
+   * Get associative array with all values of entries
+   * @return array
+   */
+  public function all(): array
+  {
+    return array_map(fn($e) => $e->get(), $this->scope->entries());
+  }
 }
