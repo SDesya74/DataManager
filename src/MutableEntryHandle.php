@@ -2,6 +2,7 @@
 
 namespace SDesya74\DataManager;
 
+use Closure;
 use Illuminate\Support\Facades\Event;
 
 /**
@@ -36,5 +37,23 @@ class MutableEntryHandle extends ReadonlyEntryHandle
     $previousValue = $this->entry->initialized() ? $this->entry->get() : null;
     $this->entry->set($value);
     Event::dispatch($this->fullPath(), [$this->entry, $previousValue]);
+  }
+
+  /**
+   * Update value in entry
+   * 
+   * Example:
+   * ```php
+   * $header = $scope->entry("header"); // get a scope
+   * $header->update(fn($last) => array_merge($last, ["new"]), []); // add item to array in entry
+   * ```
+   * 
+   * @param Closure $updater Closure that accepts 1 argument with last value of an entry
+   * @param mixed|null $initializer Optional default value of an entry
+   * @return void
+   */
+  public function update(Closure $updater, mixed $initializer = null)
+  {
+    $this->set($updater($this->get($initializer)));
   }
 }
