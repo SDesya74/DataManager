@@ -71,7 +71,7 @@ class Entry
       // this disaster can happen when $initializer did not return anything and did not set value to entry in initializer
       if (!isset($this->value)) {
         $key = $this->key();
-        throw new ErrorException("Value of entry `$key` is not initialized. Check its initializer, if it is function, it must call `\$entry->set(...)` or return some value.");
+        throw new ErrorException("Value of entry `$key` is not initialized. Check its initializer, if it is a function, it must call `\$entry->set(...)` or return some value.");
       }
     }
 
