@@ -52,6 +52,18 @@ class ReadonlyScopeHandle implements ArrayAccess
   }
 
   /**
+   * Get an entry handle that makes easier to work with arrays
+   * 
+   * @param string $key Entry key
+   * @return ArrayEntryHandle 
+   */
+  public function array(string $key)
+  {
+    $entry = $this->scope->entry($key)->setPublic($this->public);
+    return new ArrayEntryHandle($this->scope, $entry);
+  }
+
+  /**
    * Whether or not an entry exists.
    *
    * @param string $key A key to check for.

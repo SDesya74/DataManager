@@ -76,6 +76,18 @@ class MutableScopeHandle implements ArrayAccess
   }
 
   /**
+   * Get an entry handle that makes easier to work with arrays
+   * 
+   * @param string $key Entry key
+   * @return ArrayEntryHandle 
+   */
+  public function array(string $key)
+  {
+    $entry = $this->scope->entry($key)->setPublic($this->public);
+    return new ArrayEntryHandle($this->scope, $entry);
+  }
+
+  /**
    * Subscribe on all mutations in this entry
    * 
    * Example:
