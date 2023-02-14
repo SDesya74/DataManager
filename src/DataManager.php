@@ -145,10 +145,10 @@ class DataManager implements ArrayAccess
   public function allPublic(): array
   {
     $output = [];
-    foreach ($this->scopes as $scope) {
+    foreach ($this->scopes as $scopeName => $scope) {
       foreach ($scope->entries() as $entry) {
         if ($entry->isPublic()) {
-          $output[$entry->key()] = $entry->get();
+          $output[$scopeName][$entry->key()] = $entry->get();
         }
       }
     }
